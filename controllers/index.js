@@ -1,12 +1,16 @@
 const { XMLParser, XMLBuilder } = require("fast-xml-parser");
 const { transformItem } = require("../helpers/index.js");
-const RSS_URL = process.env.RSS_URL;
 
+const builder = new XMLBuilder({
+  ignoreAttributes: false,
+  format: true,
+});
+
+const RSS_URL = process.env.RSS_URL;
 
 // RSS FEED CONTROLLER - LOCALIST
 const convertRSStoCustomRSS = async (req, res) => {
   try {
-
     /* Fetch original RSS*/
     const fetchOriginalRSS = await fetch(RSS_URL, {
       headers: {
@@ -61,11 +65,6 @@ const convertRSStoCustomRSS = async (req, res) => {
     };
 
     /* Convert JavaScript Object → XML */
-    const builder = new XMLBuilder({
-      ignoreAttributes: false,
-      format: true,
-    });
-
     const targetXML = builder.build(targetData);
 
     /* Return XML */
