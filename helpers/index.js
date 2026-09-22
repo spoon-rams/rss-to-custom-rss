@@ -1,18 +1,18 @@
-/*
-|--------------------------------------------------------------------------
-| Parse Title
-|--------------------------------------------------------------------------
-|
-| Example:
-|
-| September 25: Presidential Inauguration Lecture at Lincoln Center
-|
-| becomes:
-|
-| title: Presidential Inauguration Lecture
-| location: Lincoln Center
-|
-*/
+/***
+ * @function: Parse Title
+ * INPUT:
+ * @parm {string} sourceTitle - The title string from the RSS feed
+ * Example:
+ * "September 25: Presidential Inauguration Lecture at Lincoln Center"
+ * OUTPUT:
+ * @returns {object} - An object containing the parsed title and location
+ * Example:
+ * {
+ *   title: "Presidential Inauguration Lecture",
+ *   location: "Lincoln Center"
+ * }
+ * @description: This function takes a title string from the Localist RSS feed and parses it to extract the main title and location. It removes any date information and splits the title based on the last occurrence of " at " so the title stands along and so does the location.
+ */
 
 const parseTitle = (sourceTitle) => {
   if (!sourceTitle) {
@@ -49,22 +49,20 @@ const parseTitle = (sourceTitle) => {
   };
 };
 
-/*
-|--------------------------------------------------------------------------
-| Parse Date
-|--------------------------------------------------------------------------
-|
-| Example:
-|
-| Fri, 25 Sep 2026 18:00:00 -0400
-|
-| becomes:
-|
-| start-date: 2026-09-25
-| start-month: 09
-| start-day: Friday
-|
-*/
+/***
+ * @function: Parse Date
+ * INPUT:
+ * @param {string} pubDate - The publication date string from the RSS feed
+ * OUTPUT:
+ * @returns {object} - An object containing the parsed date information
+ * Example:
+ * {
+ *   startDate: "25",
+ *   startMonth: "September",
+ *   startDay: "Friday"
+ * }
+ * @description: This function takes a publication date string from the Localist RSS feed and parses it to extract the start date, month, and day, then converts it to the above desired format.
+ */
 
 const parseDate = (pubDate) => {
   if (!pubDate) {
@@ -106,11 +104,14 @@ const parseDate = (pubDate) => {
   };
 };
 
-/*
-|--------------------------------------------------------------------------
-| Transform One RSS Item
-|--------------------------------------------------------------------------
-*/
+/***
+ * @function: Convert RSS Item
+ * INPUT:
+ * @param {object} item - An individual RSS item object from the parsed RSS feed
+ * OUTPUT:
+ * @returns {object} - A transformed RSS item object
+ * @description: This function takes an individual RSS item object from the parsed RSS feed and transforms it into a custom format that also includes the parsed updated title and date. It then is the only function that is used in the controller to transform the entire feed and returned to the client.
+ */
 
 const transformItem = (item) => {
   const { title, location } = parseTitle(item.title);
@@ -144,11 +145,5 @@ const transformItem = (item) => {
     guid,
   };
 };
-
-/*
-|--------------------------------------------------------------------------
-| XML Feed Route
-|--------------------------------------------------------------------------
-*/
 
 module.exports = { transformItem };
