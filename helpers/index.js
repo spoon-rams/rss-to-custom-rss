@@ -129,13 +129,13 @@ const transformItem = (item) => {
   } = item;
 
   return {
+    "start-date": startDate,
+    "start-month": startMonth,
+    "start-day": startDay,
     title,
     location,
     description,
     link,
-    "start-date": startDate,
-    "start-month": startMonth,
-    "start-day": startDay,
     "geo:lat": latitude,
     "geo:long": longitude,
     pubDate,

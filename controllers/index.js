@@ -1,5 +1,6 @@
 const { XMLParser, XMLBuilder } = require("fast-xml-parser");
 const { transformItem } = require("../helpers/index.js");
+const { fetchSourceRSS } = require("../utils/index.js");
 const RSS_URL = process.env.RSS_URL;
 
 const XMLparser = new XMLParser({
@@ -15,22 +16,9 @@ const XMLbuilder = new XMLBuilder({
 // RSS FEED CONTROLLER - LOCALIST
 const convertRSStoCustomRSS = async (req, res) => {
   try {
-    
-    /* Fetch original RSS*/
-    const fetchOriginalRSS = await fetch(RSS_URL, {
-      headers: {
-        "User-Agent": "Fordham-RSS-Transformer/1.0",
-        Accept: "application/rss+xml, application/xml, text/xml",
-      },
-    });
-
-    if (!fetchOriginalRSS.ok) {
-      throw new Error(`RSS request failed with status ${fetchOriginalRSS.status}`);
-    }
-
-    const sourceXML = await fetchOriginalRSS.text();
 
     /* Parse XML into JavaScript */
+    const sourceXML = await fetchSourceRSS(RSS_URL);
     const parsedRSS = XMLparser.parse(sourceXML);
 
     /* Get RSS items */
