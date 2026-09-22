@@ -136,11 +136,11 @@ const transformItem = (item) => {
     location,
     description,
     link,
+    "media:content": mediaContent,
     "geo:lat": latitude,
     "geo:long": longitude,
     pubDate,
     "dc:date": dateCreated,
-    "media:content": mediaContent,
     category,
     guid,
   };
