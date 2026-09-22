@@ -1,41 +1,23 @@
-const { XMLParser, XMLBuilder } = require("fast-xml-parser");
+const { XMLBuilder } = require("fast-xml-parser");
 const { transformItem } = require("../helpers/index.js");
 const { fetchSourceRSS } = require("../utils/index.js");
 const RSS_URL = process.env.RSS_URL;
-
-const XMLparser = new XMLParser({
-  ignoreAttributes: false,
-});
 
 const XMLbuilder = new XMLBuilder({
   ignoreAttributes: false,
   format: true,
 });
 
-
 // RSS FEED CONTROLLER - LOCALIST
 const convertRSStoCustomRSS = async (req, res) => {
   try {
+    const items = await fetchSourceRSS(RSS_URL);
 
-    /* Parse XML into JavaScript */
-    const sourceXML = await fetchSourceRSS(RSS_URL);
-    const parsedRSS = XMLparser.parse(sourceXML);
-
-    /* Get RSS items */
-    const rawItems = parsedRSS?.rss?.channel?.item;
-
-    if (!rawItems) {
-      throw new Error("No RSS items were found in the source feed.");
-    }
-
-    // Always make items an array
-    const items = Array.isArray(rawItems) ? rawItems : [rawItems];
-
-    /* Transform Every Item */
+    /* Convert every item */
     const transformedItems = items.map(transformItem);
 
     /* Create Target XML Object */
-    const targetData = {
+    const convertedData = {
       rss: {
         "@_version": "2.0",
         "@_xmlns:dc": "http://purl.org/dc/elements/1.1/",
@@ -54,12 +36,12 @@ const convertRSStoCustomRSS = async (req, res) => {
     };
 
     /* Convert JavaScript Object → XML */
-    const targetXML = XMLbuilder.build(targetData);
+    const convertedXML = XMLbuilder.build(convertedData);
 
     /* Return XML */
-    const xmlOutput = `<?xml version="1.0" encoding="UTF-8"?>\n${targetXML}`;
+    const newXMLOutput = `<?xml version="1.0" encoding="UTF-8"?>\n${convertedXML}`;
 
-    res.set("Content-Type", "application/xml; charset=utf-8").send(xmlOutput);
+    res.set("Content-Type", "application/xml; charset=utf-8").send(newXMLOutput);
   } catch (error) {
     console.error(error);
 

@@ -1,3 +1,9 @@
+const { XMLParser } = require("fast-xml-parser");
+
+const XMLparser = new XMLParser({
+  ignoreAttributes: false,
+});
+
 const fetchSourceRSS = async (url) => {
   try {
     const res = await fetch(url, {
@@ -10,7 +16,20 @@ const fetchSourceRSS = async (url) => {
       throw new Error(`RSS request failed with status ${res.status}`);
     }
     const sourceXML = await res.text();
-    return sourceXML;
+
+    /* Parse XML into JavaScript */
+    const parsedRSS = XMLparser.parse(sourceXML);
+
+    /* Get RSS items */
+    const rawItems = parsedRSS?.rss?.channel?.item;
+
+    if (!rawItems) {
+      throw new Error("No RSS items were found in the source feed.");
+    }
+
+    // Always make items an array
+    const items = Array.isArray(rawItems) ? rawItems : [rawItems];
+    return items;
   } catch (error) {
     console.error("Error fetching source RSS:", error);
     throw error;
