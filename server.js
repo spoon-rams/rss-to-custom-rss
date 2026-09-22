@@ -2,8 +2,7 @@ import express from "express";
 import { XMLParser, XMLBuilder } from "fast-xml-parser";
 
 const app = express();
-const RSS_URL =
-  "https://calendar.fordham.edu/calendar.xml?card_size=small&days=365&event_types%5B%5D=53559855479273&event_types%5B%5D=53559855475176&experience=";
+const RSS_URL = process.env.RSS_URL;
 
 /*
 |--------------------------------------------------------------------------
@@ -251,7 +250,7 @@ app.get("/events/feed", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`RSS transformer running at http://localhost:${PORT}/events/feed`);
 });
