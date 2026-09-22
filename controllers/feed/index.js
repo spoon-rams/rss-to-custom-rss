@@ -1,9 +1,9 @@
-
-import { XMLParser, XMLBuilder } from "fast-xml-parser";
+const { XMLParser, XMLBuilder } = require("fast-xml-parser");
+const { transformItem } = require("../../helpers/index.js");
 const RSS_URL = process.env.RSS_URL;
 
-const convertRSStoCustomRSS = (req, res) => {
- try {
+const convertRSStoCustomRSS = async (req, res) => {
+  try {
     /*
     |--------------------------------------------------------------------------
     | Fetch original RSS
@@ -110,3 +110,5 @@ const convertRSStoCustomRSS = (req, res) => {
     });
   }
 };
+
+module.exports = { convertRSStoCustomRSS };

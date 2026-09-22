@@ -1,9 +1,8 @@
-import express from "express";
+const express = require("express");
 const app = express();
+const rssFeed = require("./routes/Feed");
 
-app.use("/localist", async (req, res) => {
- 
-});
+app.use("/localist", rssFeed);
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
