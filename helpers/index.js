@@ -115,9 +115,18 @@ const parseDate = (pubDate) => {
 const transformItem = (item) => {
   const { title, location } = parseTitle(item.title);
   const { startDate, startMonth, startDay } = parseDate(item.pubDate);
-  const { description, link } = item;
+  const {
+    description,
+    link,
+    pubDate,
+    category,
+    guid,
+    "geo:lat": latitude,
+    "geo:long": longitude,
+    "dc:date": dateCreated,
+    "media:content": mediaContent,
+  } = item;
 
-  console.log(item);
   return {
     title,
     location,
@@ -126,6 +135,13 @@ const transformItem = (item) => {
     "start-date": startDate,
     "start-month": startMonth,
     "start-day": startDay,
+    "geo:lat": latitude,
+    "geo:long": longitude,
+    pubDate,
+    "dc:date": dateCreated,
+    "media:content": mediaContent,
+    category,
+    guid,
   };
 };
 
