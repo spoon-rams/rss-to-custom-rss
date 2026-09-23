@@ -1,6 +1,6 @@
 const { XMLBuilder } = require("fast-xml-parser");
 const { transformItem } = require("../helpers/index.js");
-const { fetchSourceRSS } = require("../utils/index.js");
+const { fetchSourceRSS, querySearchFilter } = require("../utils/index.js");
 const RSS_URL = process.env.RSS_URL;
 
 const XMLbuilder = new XMLBuilder({
@@ -15,32 +15,19 @@ const convertRSStoCustomRSS = async (req, res) => {
     const items = await fetchSourceRSS(RSS_URL);
 
     /* Convert every item */
-    const transformedItems = items.map(transformItem);
+    const convertedRSSItems = items.map(transformItem);
+    const filteredRSSItems =
+      req.query.category && req.query.category.length > 0
+        ? querySearchFilter(req, convertedRSSItems)
+        : null;
 
-    let filteredItems = transformedItems;
-
-    // Filter items by category if the 'category' query parameter is provided
-    if (req.query.category) {
-      const requestedCategories = Array.isArray(req.query.category)
-        ? req.query.category
-        : [req.query.category];
-
-      const requestedCategorySet = new Set(
-        requestedCategories.map((category) => category.toLowerCase()),
-      );
-
-      filteredItems = filteredItems.filter((item) => {
-        const categories = item.category
-          ? Array.isArray(item.category)
-            ? item.category
-            : [item.category]
-          : [];
-
-        return categories.some((category) => requestedCategorySet.has(category.toLowerCase()));
-      });
-    }
-
-    console.log(`Filtered items count: ${filteredItems.length}`);
+    console.log(`Total items fetched: ${items.length}`);
+    console.log(`Total items converted: ${convertedRSSItems.length}`);
+    console.log(
+      `Total items after filtering: ${
+        filteredRSSItems ? filteredRSSItems.length : "No filtering applied"
+      }`,
+    );
 
     /* Create Target XML Object */
     const convertedData = {
@@ -56,7 +43,8 @@ const convertRSStoCustomRSS = async (req, res) => {
           description: "Fordham University Events Localist RSS feed remapped to a custom format",
           language: "en-us",
           lastBuildDate: new Date().toUTCString(),
-          item: filteredItems,
+          query: req.query.category ? req.query.category : undefined,
+          item: filteredRSSItems ? filteredRSSItems : convertedRSSItems,
         },
       },
     };
