@@ -36,6 +36,28 @@ const fetchSourceRSS = async (url) => {
   }
 };
 
+const querySearchFilter = (req, items) => {
+  // Filter items by category if the 'category' query parameter is provided
+  const requestedCategories = Array.isArray(req.query.category)
+    ? req.query.category
+    : [req.query.category];
+
+  const requestedCategorySet = new Set(
+    requestedCategories.map((category) => category.toLowerCase()),
+  );
+
+  return items.filter((item) => {
+    const categories = item.category
+      ? Array.isArray(item.category)
+        ? item.category
+        : [item.category]
+      : [];
+
+    return categories.some((category) => requestedCategorySet.has(category.toLowerCase()));
+  });
+};
+
 module.exports = {
   fetchSourceRSS,
+  querySearchFilter,
 };
