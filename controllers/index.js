@@ -10,11 +10,37 @@ const XMLbuilder = new XMLBuilder({
 
 // RSS FEED CONTROLLER - LOCALIST
 const convertRSStoCustomRSS = async (req, res) => {
+  console.log("RSS Query Parameters:", req.query);
   try {
     const items = await fetchSourceRSS(RSS_URL);
 
     /* Convert every item */
     const transformedItems = items.map(transformItem);
+
+    let filteredItems = transformedItems;
+
+    // Filter items by category if the 'category' query parameter is provided
+    if (req.query.category) {
+      const requestedCategories = Array.isArray(req.query.category)
+        ? req.query.category
+        : [req.query.category];
+
+      const requestedCategorySet = new Set(
+        requestedCategories.map((category) => category.toLowerCase()),
+      );
+
+      filteredItems = filteredItems.filter((item) => {
+        const categories = item.category
+          ? Array.isArray(item.category)
+            ? item.category
+            : [item.category]
+          : [];
+
+        return categories.some((category) => requestedCategorySet.has(category.toLowerCase()));
+      });
+    }
+
+    console.log(`Filtered items count: ${filteredItems.length}`);
 
     /* Create Target XML Object */
     const convertedData = {
@@ -26,11 +52,11 @@ const convertRSStoCustomRSS = async (req, res) => {
         "@_xmlns:xCal": "urn:ietf:params:xml:ns:xcal",
         channel: {
           title: "Fordham Localist Events Remap RSS feeds",
-          link: "https://now.fordham.edu/events/",
+          link: "https://localhost:3000/localist/events/feed",
           description: "Fordham University Events Localist RSS feed remapped to a custom format",
           language: "en-us",
           lastBuildDate: new Date().toUTCString(),
-          item: transformedItems,
+          item: filteredItems,
         },
       },
     };
