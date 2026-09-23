@@ -4,5 +4,4 @@ const { convertRSStoCustomRSS } = require("../controllers");
 
 router.get("/events/feed/", convertRSStoCustomRSS);
 
-
 module.exports = router;
