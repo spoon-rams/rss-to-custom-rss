@@ -4,6 +4,12 @@ const XMLparser = new XMLParser({
   ignoreAttributes: false,
 });
 
+const CACHE_TTL = 15 * 60 * 1000; // 15 minutes in milliseconds
+
+let cachedItems = null;
+let cacheExpiresAt = 0;
+let refreshPromise = null;
+
 const fetchSourceRSS = async (url) => {
   try {
     const res = await fetch(url, {
@@ -11,6 +17,7 @@ const fetchSourceRSS = async (url) => {
         "User-Agent": "Fordham-RSS-Transformer/1.0",
         Accept: "application/rss+xml, application/xml, text/xml",
       },
+      signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) {
       throw new Error(`RSS request failed with status ${res.status}`);
@@ -46,6 +53,10 @@ const querySearchFilter = (req, items) => {
     requestedCategories.map((category) => category.toLowerCase()),
   );
 
+  // console.log("QUERY CATEGORY:", req.query.category);
+  // console.log("SAMPLE ITEM CATEGORY:", items[0]?.category);
+  // console.log("REQUESTED:", [...requestedCategorySet]);
+
   return items.filter((item) => {
     const categories = item.category
       ? Array.isArray(item.category)
@@ -53,11 +64,39 @@ const querySearchFilter = (req, items) => {
         : [item.category]
       : [];
 
+    //console.log("ITEM CATEGORIES:", categories);
+
     return categories.some((category) => requestedCategorySet.has(category.toLowerCase()));
   });
+};
+
+const cacheSourceRSS = async (getData) => {
+  const now = Date.now();
+
+  if (cachedItems && now < cacheExpiresAt) {
+    return cachedItems;
+  }
+
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  refreshPromise = getData()
+    .then((items) => {
+      cachedItems = items;
+      cacheExpiresAt = Date.now() + CACHE_TTL;
+
+      return cachedItems;
+    })
+    .finally(() => {
+      refreshPromise = null;
+    });
+
+  return refreshPromise;
 };
 
 module.exports = {
   fetchSourceRSS,
   querySearchFilter,
+  cacheSourceRSS,
 };

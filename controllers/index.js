@@ -1,7 +1,6 @@
 const { XMLBuilder } = require("fast-xml-parser");
-const { transformItem } = require("../helpers/index.js");
-const { fetchSourceRSS, querySearchFilter } = require("../utils/index.js");
-const RSS_URL = process.env.RSS_URL;
+const { querySearchFilter } = require("../utils/index.js");
+const { getFeedItems } = require("../services/index.js");
 
 const XMLbuilder = new XMLBuilder({
   ignoreAttributes: false,
@@ -12,17 +11,13 @@ const XMLbuilder = new XMLBuilder({
 const convertRSStoCustomRSS = async (req, res) => {
   console.log("RSS Query Parameters:", req.query);
   try {
-    const items = await fetchSourceRSS(RSS_URL);
+    const items = await getFeedItems();
 
     /* Convert every item */
-    const convertedRSSItems = items.map(transformItem);
     const filteredRSSItems =
-      req.query.category && req.query.category.length > 0
-        ? querySearchFilter(req, convertedRSSItems)
-        : null;
+      req.query.category && req.query.category.length > 0 ? querySearchFilter(req, items) : items;
 
     console.log(`Total items fetched: ${items.length}`);
-    console.log(`Total items converted: ${convertedRSSItems.length}`);
     console.log(
       `Total items after filtering: ${
         filteredRSSItems ? filteredRSSItems.length : "No filtering applied"
@@ -44,7 +39,7 @@ const convertRSStoCustomRSS = async (req, res) => {
           language: "en-us",
           lastBuildDate: new Date().toUTCString(),
           query: req.query.category ? req.query.category : undefined,
-          item: filteredRSSItems ? filteredRSSItems : convertedRSSItems,
+          item: filteredRSSItems,
         },
       },
     };
