@@ -10,7 +10,6 @@ const XMLbuilder = new XMLBuilder({
 
 // RSS FEED CONTROLLER - LOCALIST
 const convertRSStoCustomRSS = async (req, res) => {
-  console.log("RSS Query Parameters:", req.query);
   try {
     const items = await fetchSourceRSS(RSS_URL);
 
