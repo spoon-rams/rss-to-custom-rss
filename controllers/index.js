@@ -42,13 +42,17 @@ const convertRSStoCustomRSS = async (req, res) => {
     /* Return XML */
     const newXMLOutput = `<?xml version="1.0" encoding="UTF-8"?>\n${convertedXML}`;
 
-    res.set("Content-Type", "application/xml; charset=utf-8").send(newXMLOutput);
+    res
+      .set({
+        "Content-Type": "application/xml; charset=utf-8",
+        "Cache-Control": "public, max-age=60, stale-while-revalidate=300, stale-if-error=86400",
+      })
+      .send(newXMLOutput);
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       error: "Unable to generate event feed",
-      message: error.message,
     });
   }
 };
