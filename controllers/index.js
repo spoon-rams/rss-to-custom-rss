@@ -4,14 +4,13 @@ const { getFeedItems } = require("../services/index.js");
 
 const XMLbuilder = new XMLBuilder({
   ignoreAttributes: false,
-  format: true,
+  format: false,
 });
 
 // RSS FEED CONTROLLER - LOCALIST
 const convertRSStoCustomRSS = async (req, res) => {
-
   try {
-    const items = await getFeedItems();
+    const { items, buildDate } = await getFeedItems();
 
     /* Convert every item */
     const filteredRSSItems =
@@ -30,7 +29,7 @@ const convertRSStoCustomRSS = async (req, res) => {
           link: "https://localhost:3000/localist/events/feed",
           description: "Fordham University Events Localist RSS feed remapped to a custom format",
           language: "en-us",
-          lastBuildDate: new Date().toUTCString(),
+          lastBuildDate: buildDate,
           query: req.query.category ? req.query.category : undefined,
           item: filteredRSSItems,
         },

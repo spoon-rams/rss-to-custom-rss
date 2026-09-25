@@ -9,6 +9,7 @@ const CACHE_TTL = 1 * 60 * 1000; // 1 minute in milliseconds
 let cachedItems = null;
 let cacheExpiresAt = 0;
 let refreshPromise = null;
+let cacheBuildDate = null;
 
 const fetchSourceRSS = async (url) => {
   try {
@@ -84,9 +85,13 @@ const cacheSourceRSS = async (getData) => {
   refreshPromise = getData()
     .then((items) => {
       cachedItems = items;
+      cacheBuildDate = new Date().toUTCString();
       cacheExpiresAt = Date.now() + CACHE_TTL;
 
-      return cachedItems;
+      return {
+        items: cachedItems,
+        buildDate: cacheBuildDate,
+      };
     })
     .finally(() => {
       refreshPromise = null;

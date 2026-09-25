@@ -1,9 +1,4 @@
-const eventDateFormatter = new Intl.DateTimeFormat("en-US", {
-  timeZone: "America/New_York",
-  weekday: "long",
-  month: "long",
-  day: "numeric",
-});
+const { eventDateFormatter } = require("./config/formatters");
 
 /***
  * @function: Parse Title
