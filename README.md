@@ -112,8 +112,8 @@ services/index.js             Fetches (with caching) and transforms source items
 utils/index.js                Source fetch/parse, in-memory cache, category filter
 helpers/index.js              Title/date parsing and per-item transformation
 helpers/xml-text.js           Extracts text from parsed XML values
-helpers/config/env.js         Environment variable loading and validation
-helpers/config/formatters.js  Date formatter (America/New_York)
+config/env.js                 Environment variable loading and validation
+config/formatters.js          Date formatter (America/New_York)
 test/feed.test.js             Tests
 ```
 

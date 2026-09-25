@@ -64,7 +64,7 @@ test('retains multibyte characters split between stream chunks', async (t) => {
 test('validates startup configuration and defaults the port', () => {
   const base = { ...process.env, RSS_URL: 'https://example.com/rss', FEED_URL: 'https://example.com/feed' };
   delete base.PORT;
-  const run = (env) => spawnSync(process.execPath, ['-e', 'console.log(require("./helpers/config/env").PORT)'], { cwd: require('node:path').join(__dirname, '..'), env, encoding: 'utf8' });
+  const run = (env) => spawnSync(process.execPath, ['-e', 'console.log(require("./config/env").PORT)'], { cwd: require('node:path').join(__dirname, '..'), env, encoding: 'utf8' });
   const valid = run(base);
   assert.equal(valid.status, 0);
   assert.equal(valid.stdout.trim(), '8000');
