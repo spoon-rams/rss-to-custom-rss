@@ -14,14 +14,7 @@ const convertRSStoCustomRSS = async (req, res) => {
 
     /* Convert every item */
     const filteredRSSItems =
-<<<<<<< HEAD
-      req.query.category && req.query.category.length > 0
-        ? querySearchFilter(req, convertedRSSItems)
-        : null;
-
-=======
       req.query.category && req.query.category.length > 0 ? querySearchFilter(req, items) : items;
->>>>>>> optimization-cache
 
     /* Create Target XML Object */
     const convertedData = {
