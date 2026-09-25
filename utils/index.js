@@ -54,9 +54,7 @@ const querySearchFilter = (req, items) => {
     requestedCategories.map((category) => category.toLowerCase()),
   );
 
-  // console.log("QUERY CATEGORY:", req.query.category);
-  // console.log("SAMPLE ITEM CATEGORY:", items[0]?.category);
-  // console.log("REQUESTED:", [...requestedCategorySet]);
+  console.log(items);
 
   return items.filter((item) => {
     const categories = item.category
@@ -75,7 +73,10 @@ const cacheSourceRSS = async (getData) => {
   const now = Date.now();
 
   if (cachedItems && now < cacheExpiresAt) {
-    return cachedItems;
+    return {
+      items: cachedItems,
+      buildDate: cacheBuildDate,
+    };
   }
 
   if (refreshPromise) {

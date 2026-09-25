@@ -1,7 +1,7 @@
 const { XMLBuilder } = require("fast-xml-parser");
 const { querySearchFilter } = require("../utils/index.js");
 const { getFeedItems } = require("../services/index.js");
-
+const FEED_URL = process.env.FEED_URL;
 const XMLbuilder = new XMLBuilder({
   ignoreAttributes: false,
   format: false,
@@ -26,7 +26,7 @@ const convertRSStoCustomRSS = async (req, res) => {
         "@_xmlns:xCal": "urn:ietf:params:xml:ns:xcal",
         channel: {
           title: "Fordham Localist Events Remap RSS feeds",
-          link: "https://localhost:3000/localist/events/feed",
+          link: FEED_URL,
           description: "Fordham University Events Localist RSS feed remapped to a custom format",
           language: "en-us",
           lastBuildDate: buildDate,
