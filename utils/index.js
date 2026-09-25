@@ -4,7 +4,7 @@ const XMLparser = new XMLParser({
   ignoreAttributes: false,
 });
 
-const CACHE_TTL = 15 * 60 * 1000; // 15 minutes in milliseconds
+const CACHE_TTL = 1 * 60 * 1000; // 1 minute in milliseconds
 
 let cachedItems = null;
 let cacheExpiresAt = 0;
