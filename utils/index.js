@@ -54,8 +54,6 @@ const querySearchFilter = (req, items) => {
     requestedCategories.map((category) => category.toLowerCase()),
   );
 
-  console.log(items);
-
   return items.filter((item) => {
     const categories = item.category
       ? Array.isArray(item.category)
