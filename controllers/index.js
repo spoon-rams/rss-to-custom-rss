@@ -21,13 +21,6 @@ const convertRSStoCustomRSS = async (req, res) => {
         ? querySearchFilter(req, convertedRSSItems)
         : null;
 
-    console.log(`Total items fetched: ${items.length}`);
-    console.log(`Total items converted: ${convertedRSSItems.length}`);
-    console.log(
-      `Total items after filtering: ${
-        filteredRSSItems ? filteredRSSItems.length : "No filtering applied"
-      }`,
-    );
 
     /* Create Target XML Object */
     const convertedData = {
