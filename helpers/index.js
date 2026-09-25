@@ -1,3 +1,4 @@
+const { xmlText } = require("./xml-text");
 const { eventDateFormatter } = require("./config/formatters");
 
 /***
@@ -118,8 +119,8 @@ const parseDate = (pubDate) => {
  */
 
 const transformItem = (item) => {
-  const { title, location } = parseTitle(item.title);
-  const { startDate, startMonth, startDay } = parseDate(item.pubDate);
+  const { title, location } = parseTitle(xmlText(item.title));
+  const { startDate, startMonth, startDay } = parseDate(xmlText(item.pubDate));
   const {
     description,
     link,
