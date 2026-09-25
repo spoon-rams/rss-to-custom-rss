@@ -1,3 +1,6 @@
+const { xmlText } = require("./xml-text");
+const { eventDateFormatter } = require("../config/formatters");
+
 /***
  * @function: Parse Title
  * INPUT:
@@ -83,24 +86,26 @@ const parseDate = (pubDate) => {
     };
   }
 
-  const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    month: "long",
-    day: "numeric",
-  });
+  let startDate = "";
+  let startMonth = "";
+  let startDay = "";
 
-  const parts = formatter.formatToParts(date);
-  const month = parts.find((part) => part.type === "month")?.value;
-  const day = parts.find((part) => part.type === "day")?.value;
-  const dayOfWeek = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    weekday: "long",
-  }).format(date);
+  const parts = eventDateFormatter.formatToParts(date);
+
+  for (const part of parts) {
+    if (part.type === "day") {
+      startDate = part.value;
+    } else if (part.type === "month") {
+      startMonth = part.value;
+    } else if (part.type === "weekday") {
+      startDay = part.value;
+    }
+  }
 
   return {
-    startDate: day,
-    startMonth: month,
-    startDay: dayOfWeek,
+    startDate,
+    startMonth,
+    startDay,
   };
 };
 
@@ -114,8 +119,8 @@ const parseDate = (pubDate) => {
  */
 
 const transformItem = (item) => {
-  const { title, location } = parseTitle(item.title);
-  const { startDate, startMonth, startDay } = parseDate(item.pubDate);
+  const { title, location } = parseTitle(xmlText(item.title));
+  const { startDate, startMonth, startDay } = parseDate(xmlText(item.pubDate));
   const {
     description,
     link,

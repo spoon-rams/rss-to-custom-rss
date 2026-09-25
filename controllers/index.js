@@ -1,25 +1,27 @@
 const { XMLBuilder } = require("fast-xml-parser");
-const { transformItem } = require("../helpers/index.js");
-const { fetchSourceRSS, querySearchFilter } = require("../utils/index.js");
-const RSS_URL = process.env.RSS_URL;
-
+const { querySearchFilter } = require("../utils/index.js");
+const { getFeedItems } = require("../services/index.js");
+const { FEED_URL } = require("../config/env.js");
 const XMLbuilder = new XMLBuilder({
   ignoreAttributes: false,
-  format: true,
+  format: false,
 });
 
 // RSS FEED CONTROLLER - LOCALIST
 const convertRSStoCustomRSS = async (req, res) => {
   try {
-    const items = await fetchSourceRSS(RSS_URL);
+    const { items, buildDate } = await getFeedItems();
 
     /* Convert every item */
-    const convertedRSSItems = items.map(transformItem);
     const filteredRSSItems =
+<<<<<<< HEAD
       req.query.category && req.query.category.length > 0
         ? querySearchFilter(req, convertedRSSItems)
         : null;
 
+=======
+      req.query.category && req.query.category.length > 0 ? querySearchFilter(req, items) : items;
+>>>>>>> optimization-cache
 
     /* Create Target XML Object */
     const convertedData = {
@@ -31,12 +33,12 @@ const convertRSStoCustomRSS = async (req, res) => {
         "@_xmlns:xCal": "urn:ietf:params:xml:ns:xcal",
         channel: {
           title: "Fordham Localist Events Remap RSS feeds",
-          link: "https://localhost:3000/localist/events/feed",
+          link: FEED_URL,
           description: "Fordham University Events Localist RSS feed remapped to a custom format",
           language: "en-us",
-          lastBuildDate: new Date().toUTCString(),
+          lastBuildDate: buildDate,
           query: req.query.category ? req.query.category : undefined,
-          item: filteredRSSItems ? filteredRSSItems : convertedRSSItems,
+          item: filteredRSSItems,
         },
       },
     };
@@ -47,13 +49,17 @@ const convertRSStoCustomRSS = async (req, res) => {
     /* Return XML */
     const newXMLOutput = `<?xml version="1.0" encoding="UTF-8"?>\n${convertedXML}`;
 
-    res.set("Content-Type", "application/xml; charset=utf-8").send(newXMLOutput);
+    res
+      .set({
+        "Content-Type": "application/xml; charset=utf-8",
+        "Cache-Control": "public, max-age=60, stale-while-revalidate=300, stale-if-error=86400",
+      })
+      .send(newXMLOutput);
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
       error: "Unable to generate event feed",
-      message: error.message,
     });
   }
 };

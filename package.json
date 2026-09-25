@@ -4,7 +4,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+<<<<<<< HEAD
     "test": "echo \"Error: no test specified\" && exit 1",
+=======
+    "test": "node --test",
+>>>>>>> optimization-cache
     "dev": "node --watch --env-file=.env server.js",
     "start": "node server.js"
   },
@@ -15,5 +19,8 @@
   "dependencies": {
     "express": "^5.2.1",
     "fast-xml-parser": "^5.11.1"
+  },
+  "engines": {
+    "node": ">=24.0.0"
   }
 }
