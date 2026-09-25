@@ -9,20 +9,13 @@ const XMLbuilder = new XMLBuilder({
 
 // RSS FEED CONTROLLER - LOCALIST
 const convertRSStoCustomRSS = async (req, res) => {
-  console.log("RSS Query Parameters:", req.query);
+
   try {
     const items = await getFeedItems();
 
     /* Convert every item */
     const filteredRSSItems =
       req.query.category && req.query.category.length > 0 ? querySearchFilter(req, items) : items;
-
-    console.log(`Total items fetched: ${items.length}`);
-    console.log(
-      `Total items after filtering: ${
-        filteredRSSItems ? filteredRSSItems.length : "No filtering applied"
-      }`,
-    );
 
     /* Create Target XML Object */
     const convertedData = {
