@@ -1,5 +1,5 @@
 const { xmlText } = require("./xml-text");
-const { eventDateFormatter } = require("./config/formatters");
+const { eventDateFormatter } = require("../config/formatters");
 
 /***
  * @function: Parse Title

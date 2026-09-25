@@ -1,7 +1,7 @@
 const { XMLBuilder } = require("fast-xml-parser");
 const { querySearchFilter } = require("../utils/index.js");
 const { getFeedItems } = require("../services/index.js");
-const { FEED_URL } = require("../helpers/config/env.js");
+const { FEED_URL } = require("../config/env.js");
 const XMLbuilder = new XMLBuilder({
   ignoreAttributes: false,
   format: false,
